@@ -9041,6 +9041,8 @@ export default class binance extends Exchange {
         }
         const response = await this[method] (this.extend (request, params));
         //
+        // CHECK
+        //
         // futures (fapi)
         //
         //     {
