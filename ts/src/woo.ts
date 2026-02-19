@@ -3315,12 +3315,24 @@ export default class woo extends Exchange {
         //         "estFundingIntervalHours": 8
         //     }
         //
+        // watchFundingRate
+        //
+        //     {
+        //         "symbol": "PERP_BTC_USDT",
+        //         "fundingRate": 0.0001,
+        //         "fundingTs": 1771488000000
+        //     }
+        //
         const symbol = this.safeString (fundingRate, 'symbol');
         market = this.market (symbol);
-        const nextFundingTimestamp = this.safeInteger (fundingRate, 'nextFundingTime');
+        const nextFundingTimestamp = this.safeInteger2 (fundingRate, 'nextFundingTime', 'fundingTs');
         const estFundingRateTimestamp = this.safeInteger (fundingRate, 'estFundingRateTimestamp');
         const lastFundingRateTimestamp = this.safeInteger (fundingRate, 'lastFundingRateTimestamp');
         const intervalString = this.safeString (fundingRate, 'estFundingIntervalHours');
+        let interval = undefined;
+        if (intervalString !== undefined) {
+            interval = intervalString + 'h';
+        }
         return {
             'info': fundingRate,
             'symbol': market['symbol'],
@@ -3330,7 +3342,7 @@ export default class woo extends Exchange {
             'estimatedSettlePrice': undefined,
             'timestamp': estFundingRateTimestamp,
             'datetime': this.iso8601 (estFundingRateTimestamp),
-            'fundingRate': this.safeNumber (fundingRate, 'estFundingRate'),
+            'fundingRate': this.safeNumber2 (fundingRate, 'estFundingRate', 'fundingRate'),
             'fundingTimestamp': nextFundingTimestamp,
             'fundingDatetime': this.iso8601 (nextFundingTimestamp),
             'nextFundingRate': undefined,
@@ -3339,7 +3351,7 @@ export default class woo extends Exchange {
             'previousFundingRate': this.safeNumber (fundingRate, 'lastFundingRate'),
             'previousFundingTimestamp': lastFundingRateTimestamp,
             'previousFundingDatetime': this.iso8601 (lastFundingRateTimestamp),
-            'interval': intervalString + 'h',
+            'interval': interval,
         } as FundingRate;
     }
 
