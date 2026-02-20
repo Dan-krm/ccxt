@@ -462,11 +462,11 @@ export default class paradex extends paradexRest {
      * @name paradex#watchFundingRates
      * @description watch the funding rate for multiple markets
      * @see https://docs.paradex.trade/ws/web-socket-channels/markets-summary/markets-summary
-     * @param {string[]} symbols list of unified market symbols
+     * @param {string[]} [symbols] a list of unified market symbols
      * @param {object} [params] extra parameters specific to the exchange API endpoint
      * @returns {object} a [funding rate structure]{@link https://docs.ccxt.com/?id=funding-rate-structure}
      */
-    async watchFundingRates (symbols: string[], params = {}): Promise<FundingRates> {
+    async watchFundingRates (symbols: Strings = undefined, params = {}): Promise<FundingRates> {
         await this.loadMarkets ();
         symbols = this.marketSymbols (symbols);
         const channel = 'funding_data';
@@ -479,9 +479,13 @@ export default class paradex extends paradexRest {
             },
         };
         const messageHashes = [];
-        for (let i = 0; i < symbols.length; i++) {
-            const messageHash = channel + '.' + symbols[i];
-            messageHashes.push (messageHash);
+        if (Array.isArray (symbols)) {
+            for (let i = 0; i < symbols.length; i++) {
+                const messageHash = channel + '.' + symbols[i];
+                messageHashes.push (messageHash);
+            }
+        } else {
+            messageHashes.push (channel);
         }
         const newFundingRates = await this.watchMultiple (url, messageHashes, this.deepExtend (request, params), messageHashes);
         if (this.newUpdates) {

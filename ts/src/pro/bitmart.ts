@@ -2,7 +2,7 @@
 //  ---------------------------------------------------------------------------
 
 import bitmartRest from '../bitmart.js';
-import { AuthenticationError, ExchangeError, NotSupported } from '../base/errors.js';
+import { AuthenticationError, ExchangeError, NotSupported, ArgumentsRequired } from '../base/errors.js';
 import { ArrayCache, ArrayCacheByTimestamp, ArrayCacheBySymbolById, ArrayCacheBySymbolBySide } from '../base/ws/Cache.js';
 import { sha256 } from '../static_dependencies/noble-hashes/sha256.js';
 import type { Int, Market, Str, Strings, OrderBook, Order, Trade, Ticker, Tickers, OHLCV, Position, Balances, Dict, Bool, FundingRate, FundingRates } from '../base/types.js';
@@ -1792,11 +1792,14 @@ export default class bitmart extends bitmartRest {
      * @name bitmart#watchFundingRates
      * @description watch the funding rate for multiple markets
      * @see https://developer-pro.bitmart.com/en/futuresv2/#public-funding-rate-channel
-     * @param {string[]} [symbols] list of unified market symbols
+     * @param {string[]} symbols a list of unified market symbols
      * @param {object} [params] extra parameters specific to the exchange API endpoint
      * @returns {object} a dictionary of [funding rate structures]{@link https://docs.ccxt.com/?id=funding-rate-structure}, indexed by market symbols
      */
-    async watchFundingRates (symbols: string[], params = {}): Promise<FundingRates> {
+    async watchFundingRates (symbols: Strings = undefined, params = {}): Promise<FundingRates> {
+        if (symbols === undefined) {
+            throw new ArgumentsRequired (this.id + ' watchFundingRates() requires an array of symbols');
+        }
         await this.loadMarkets ();
         const market = this.getMarketFromSymbols (symbols);
         let marketType = undefined;
