@@ -479,13 +479,9 @@ export default class paradex extends paradexRest {
             },
         };
         const messageHashes = [];
-        if (Array.isArray (symbols)) {
-            for (let i = 0; i < symbols.length; i++) {
-                const messageHash = channel + '.' + symbols[i];
-                messageHashes.push (messageHash);
-            }
-        } else {
-            messageHashes.push (channel);
+        for (let i = 0; i < symbols.length; i++) {
+            const messageHash = channel + '.' + symbols[i];
+            messageHashes.push (messageHash);
         }
         const newFundingRates = await this.watchMultiple (url, messageHashes, this.deepExtend (request, params), messageHashes);
         if (this.newUpdates) {

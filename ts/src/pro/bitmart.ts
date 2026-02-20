@@ -2128,7 +2128,7 @@ export default class bitmart extends bitmartRest {
                 'asset': this.handleBalance,
             };
             if (channel.indexOf ('fundingRate') >= 0) {
-                this.handleFundingRate.call (this, client, message);
+                this.handleFundingRate (client, message);
             }
             const keys = Object.keys (methods);
             for (let i = 0; i < keys.length; i++) {
